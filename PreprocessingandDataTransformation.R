@@ -26,3 +26,10 @@ if (missing_values > 0) {
 } else {
   print("There are no missing values in the dataset.")
 }
+
+# Round off numeric columns to 2 decimal places
+numeric_cols <- sapply(obesity_data, is.numeric)
+obesity_data[numeric_cols] <- lapply(obesity_data[numeric_cols], round, 2)
+
+# Print first few rows of the updated dataset
+head(obesity_data)
