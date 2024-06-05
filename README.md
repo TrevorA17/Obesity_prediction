@@ -1,2 +1,2 @@
-# Obesity_prediction
-Predict the obesity using the features
+# Obesity prediction
+Welcome to my Obesity Prediction API project! This project aims to provide a convenient and efficient way to predict obesity based on individual characteristics. Leveraging machine learning techniques, particularly Random Forest models, my API enables users to input essential features such as gender, height, weight, BMI, and physical activity level, and receive predictions regarding the likelihood of obesity. With a user-friendly interface and seamless integration, my API can be easily incorporated into various applications and systems, ranging from healthcare platforms to fitness apps. Whether you're a developer seeking to enhance user experience or a healthcare professional looking for tools to support patient care, my Obesity Prediction API offers a reliable solution to address obesity-related challenges and promote health and well-being in our communities.
