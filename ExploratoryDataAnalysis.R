@@ -56,3 +56,33 @@ anova_result <- aov(BMI ~ PhysicalActivityLevel, data = obesity_data)
 
 # Print ANOVA summary
 print(summary(anova_result))
+
+# Univariate Plots
+library(ggplot2)
+# Histogram of Age
+age_hist <- ggplot(obesity_data, aes(x = Age)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black") +
+  labs(title = "Histogram of Age", x = "Age", y = "Frequency")
+
+# Boxplot of Weight
+weight_boxplot <- ggplot(obesity_data, aes(x = "", y = Weight)) +
+  geom_boxplot(fill = "orange", color = "black") +
+  labs(title = "Boxplot of Weight", x = "", y = "Weight")
+
+# Multivariate Plots
+# Scatterplot of Height vs Weight colored by Gender
+height_weight_scatter <- ggplot(obesity_data, aes(x = Height, y = Weight, color = Gender)) +
+  geom_point() +
+  labs(title = "Scatterplot of Height vs Weight by Gender", x = "Height", y = "Weight")
+
+# Faceted histogram of BMI by ObesityCategory
+bmi_hist_facet <- ggplot(obesity_data, aes(x = BMI, fill = ObesityCategory)) +
+  geom_histogram(binwidth = 2, position = "dodge") +
+  labs(title = "Faceted Histogram of BMI by Obesity Category", x = "BMI", y = "Frequency") +
+  facet_wrap(~ObesityCategory)
+
+# Display plots
+print(age_hist)
+print(weight_boxplot)
+print(height_weight_scatter)
+print(bmi_hist_facet)
