@@ -49,3 +49,10 @@ print(paste("Correlation between BMI and Weight:", correlation_bmi_weight))
 # Relationship between Gender and ObesityCategory
 gender_obesity_table <- table(obesity_data$Gender, obesity_data$ObesityCategory)
 print(gender_obesity_table)
+
+# Perform ANOVA
+# Assuming you want to perform ANOVA to test the relationship between ObesityCategory and PhysicalActivityLevel
+anova_result <- aov(BMI ~ PhysicalActivityLevel, data = obesity_data)
+
+# Print ANOVA summary
+print(summary(anova_result))
