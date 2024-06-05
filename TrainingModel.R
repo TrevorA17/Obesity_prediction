@@ -29,3 +29,18 @@ bootstrapped_data <- replicate(100, sample(obesity_data, replace = TRUE))
 
 # Print dimensions of bootstrapped data
 print(paste("Dimensions of bootstrapped data:", dim(bootstrapped_data)))
+
+# Remove Age column
+obesity_data <- obesity_data[, -which(names(obesity_data) == "Age")]
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Define cross-validation control
+ctrl <- trainControl(method = "cv", number = 5)
+
+# Fit model using cross-validation
+cv_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rpart", trControl = ctrl)
+
+# Print cross-validation results
+print(cv_model)
