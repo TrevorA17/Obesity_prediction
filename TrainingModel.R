@@ -1,5 +1,5 @@
 # Load dataset
-obesity_data <- read.csv("your_dataset.csv", colClasses = c(
+obesity_data <- read.csv("data/obesity_data.csv", colClasses = c(
   Age = "integer",
   Gender = "factor",
   Height = "numeric",
@@ -8,6 +8,15 @@ obesity_data <- read.csv("your_dataset.csv", colClasses = c(
   PhysicalActivityLevel = "factor",
   ObesityCategory = "factor"
 ))
+
+# Display the structure of the dataset
+str(obesity_data)
+
+# View the first few rows of the dataset
+head(obesity_data)
+
+# View the dataset in a separate viewer window
+View(obesity_data)
 
 # Set seed for reproducibility
 set.seed(123)
@@ -44,3 +53,40 @@ cv_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rpart", tr
 
 # Print cross-validation results
 print(cv_model)
+
+# Train CART Model
+rpart_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rpart", trControl = ctrl)
+
+# Evaluate Model
+print(rpart_model)
+
+# Load necessary library
+library(randomForest)
+
+# Train Random Forest Model
+rf_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rf", trControl = ctrl)
+
+# Print model
+print(rf_model)
+
+# Load necessary libraries
+library(caret)
+library(e1071)
+
+# Train SVM with Radial Kernel
+svm_model <- train(ObesityCategory ~ ., data = obesity_data, method = "svmRadial", trControl = ctrl)
+
+# Print model
+print(svm_model)
+
+# Compare model performance using resamples
+resamples_list <- resamples(list(rpart = rpart_model, svm = svm_model, rf = rf_model))
+
+# Summarize performance
+summary_results <- summary(resamples_list)
+print(summary_results)
+
+
+
+
+
