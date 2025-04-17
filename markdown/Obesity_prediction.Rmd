@@ -1,0 +1,300 @@
+---
+title: "Obesity Prediction"
+author: "Trevor Okinda"
+date: "2024"
+output:
+  github_document: 
+    toc: yes
+    toc_depth: 4
+    fig_width: 6
+    fig_height: 4
+    df_print: default
+editor_options:
+  chunk_output_type: console
+---
+
+# Student Details
+
+|                                              |     |
+|----------------------------------------------|-----|
+| **Student ID Number**                        | 134780 |
+| **Student Name**                             | Trevor Okinda |
+| **BBIT 4.2 Group**                           | C |
+| **Project Name**                             | Obesity Prediction |
+
+# Setup Chunk
+
+**Note:** the following KnitR options have been set as the global defaults: <BR> `knitr::opts_chunk$set(echo = TRUE, warning = FALSE, eval = TRUE, collapse = FALSE, tidy = TRUE)`.
+
+More KnitR options are documented here <https://bookdown.org/yihui/rmarkdown-cookbook/chunk-options.html> and here <https://yihui.org/knitr/options/>.
+
+```{r setup, include=FALSE}
+library(formatR)
+knitr::opts_chunk$set(
+  warning = FALSE,
+  collapse = FALSE
+)
+```
+
+### Source: 
+
+The dataset that was used can be downloaded here: *\<https://www.kaggle.com/datasets/mrsimple07/obesity-prediction\>*
+
+### Reference:
+
+*\<mrsimple07. (n.d.). Obesity prediction [Data set]. Kaggle. https://www.kaggle.com/datasets/mrsimple07/obesity-prediction\>\
+Refer to the APA 7th edition manual for rules on how to cite datasets: <https://apastyle.apa.org/style-grammar-guidelines/references/examples/data-set-references>*
+
+# Exploratory Data Analysis
+## Load dataset
+```{r load dataset}
+# Load dataset
+obesity_data <- read.csv("obesity_data.csv", colClasses = c(
+  Age = "integer",
+  Gender = "factor",
+  Height = "numeric",
+  Weight = "numeric",
+  BMI = "numeric",
+  PhysicalActivityLevel = "factor",
+  ObesityCategory = "factor"
+))
+
+# Display the structure of the dataset
+str(obesity_data)
+
+# View the first few rows of the dataset
+head(obesity_data)
+
+# View the dataset in a separate viewer window
+View(obesity_data)
+```
+
+## Measures of Frequency
+```{r MOF}
+# Measures of Frequency
+# Count of each category in Gender
+gender_counts <- table(obesity_data$Gender)
+print(gender_counts)
+
+```
+
+## Measures of Central Tendency
+```{r MOCT}
+# Measures of Central Tendency
+# Mean, Median, and Mode of Age
+mean_age <- mean(obesity_data$Age)
+median_age <- median(obesity_data$Age)
+mode_age <- names(sort(-table(obesity_data$Age)))[1]
+print(paste("Mean Age:", mean_age))
+print(paste("Median Age:", median_age))
+print(paste("Mode Age:", mode_age))
+
+```
+
+## Measures of Distribution
+```{r MOD}
+# Measures of Distribution
+# Range of Height
+height_range <- range(obesity_data$Height)
+print(paste("Height Range:", height_range))
+
+# Standard Deviation of Weight
+weight_sd <- sd(obesity_data$Weight)
+print(paste("Weight Standard Deviation:", weight_sd))
+
+```
+
+## Measures of Relationship
+```{r MOR}
+# Measures of Relationship
+# Correlation between BMI and Weight
+correlation_bmi_weight <- cor(obesity_data$BMI, obesity_data$Weight)
+print(paste("Correlation between BMI and Weight:", correlation_bmi_weight))
+
+# Relationship between Gender and ObesityCategory
+gender_obesity_table <- table(obesity_data$Gender, obesity_data$ObesityCategory)
+print(gender_obesity_table)
+
+```
+
+## ANOVA
+```{r ANOVA}
+# Perform ANOVA
+# Assuming you want to perform ANOVA to test the relationship between ObesityCategory and PhysicalActivityLevel
+anova_result <- aov(BMI ~ PhysicalActivityLevel, data = obesity_data)
+
+# Print ANOVA summary
+print(summary(anova_result))
+
+```
+
+## Plots
+```{r Plots}
+# Univariate Plots
+library(ggplot2)
+# Histogram of Age
+age_hist <- ggplot(obesity_data, aes(x = Age)) +
+  geom_histogram(binwidth = 5, fill = "blue", color = "black") +
+  labs(title = "Histogram of Age", x = "Age", y = "Frequency")
+
+# Boxplot of Weight
+weight_boxplot <- ggplot(obesity_data, aes(x = "", y = Weight)) +
+  geom_boxplot(fill = "orange", color = "black") +
+  labs(title = "Boxplot of Weight", x = "", y = "Weight")
+
+# Multivariate Plots
+# Scatterplot of Height vs Weight colored by Gender
+height_weight_scatter <- ggplot(obesity_data, aes(x = Height, y = Weight, color = Gender)) +
+  geom_point() +
+  labs(title = "Scatterplot of Height vs Weight by Gender", x = "Height", y = "Weight")
+
+# Faceted histogram of BMI by ObesityCategory
+bmi_hist_facet <- ggplot(obesity_data, aes(x = BMI, fill = ObesityCategory)) +
+  geom_histogram(binwidth = 2, position = "dodge") +
+  labs(title = "Faceted Histogram of BMI by Obesity Category", x = "BMI", y = "Frequency") +
+  facet_wrap(~ObesityCategory)
+
+# Display plots
+print(age_hist)
+print(weight_boxplot)
+print(height_weight_scatter)
+print(bmi_hist_facet)
+
+```
+
+# Preprocessing and Data Transformation
+## Missing Values
+```{r Missing Values}
+# Check for missing values
+missing_values <- sum(is.na(obesity_data))
+
+if (missing_values > 0) {
+  print("There are missing values in the dataset.")
+} else {
+  print("There are no missing values in the dataset.")
+}
+
+```
+
+## Round-off Columns
+```{r Round-off}
+# Round off numeric columns to 2 decimal places
+numeric_cols <- sapply(obesity_data, is.numeric)
+obesity_data[numeric_cols] <- lapply(obesity_data[numeric_cols], round, 2)
+
+# Print first few rows of the updated dataset
+head(obesity_data)
+```
+
+# Model Training
+## Data Splitting
+```{r Data Splitting}
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data into training and testing sets
+train_index <- sample(1:nrow(obesity_data), 0.7 * nrow(obesity_data))
+train_data <- obesity_data[train_index, ]
+test_data <- obesity_data[-train_index, ]
+
+# Print dimensions of training and testing sets
+print(paste("Training data dimensions:", dim(train_data)))
+print(paste("Testing data dimensions:", dim(test_data)))
+```
+
+## Bootstrapping
+```{r Bootstrapping}
+# Set seed for reproducibility
+set.seed(123)
+
+# Perform bootstrapping
+bootstrapped_data <- replicate(100, sample(obesity_data, replace = TRUE))
+
+# Print dimensions of bootstrapped data
+print(paste("Dimensions of bootstrapped data:", dim(bootstrapped_data)))
+
+```
+
+## Cross-Validation
+```{r Cross-validation}
+library(caret)
+
+# Remove Age column
+obesity_data <- obesity_data[, -which(names(obesity_data) == "Age")]
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Define cross-validation control
+ctrl <- trainControl(method = "cv", number = 5)
+
+# Fit model using cross-validation
+cv_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rpart", trControl = ctrl)
+
+# Print cross-validation results
+print(cv_model)
+```
+
+## Train Different Models
+```{r Model training}
+# Train CART Model
+rpart_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rpart", trControl = ctrl)
+
+# Evaluate Model
+print(rpart_model)
+
+# Load necessary library
+library(randomForest)
+
+# Train Random Forest Model
+rf_model <- train(ObesityCategory ~ ., data = obesity_data, method = "rf", trControl = ctrl)
+
+# Print model
+print(rf_model)
+
+# Load necessary libraries
+library(caret)
+library(e1071)
+
+# Train SVM with Radial Kernel
+svm_model <- train(ObesityCategory ~ ., data = obesity_data, method = "svmRadial", trControl = ctrl)
+
+# Print model
+print(svm_model)
+```
+
+## Performance Comparison
+```{r Performance Comparison}
+# Compare model performance using resamples
+resamples_list <- resamples(list(rpart = rpart_model, svm = svm_model, rf = rf_model))
+
+# Summarize performance
+summary_results <- summary(resamples_list)
+print(summary_results)
+```
+
+# Saving Model
+```{r Saving Model}
+# Saving the Random Forest model
+saveRDS(rf_model, "./models/saved_rf_model.rds")
+
+# Load the saved model
+loaded_rf_model <- readRDS("./models/saved_rf_model.rds")
+
+# Prepare new data for prediction
+new_data <- data.frame(
+  Gender = "Male",
+  Height = 175,
+  Weight = 80,
+  BMI = 26,
+  PhysicalActivityLevel = "3"
+)
+
+# Use the loaded model to make predictions
+predictions_loaded_model <- predict(loaded_rf_model, newdata = new_data)
+
+# Print predictions
+print(predictions_loaded_model)
+
+```
+
